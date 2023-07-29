@@ -13,15 +13,21 @@ notes.post('/', (req, res) => {
     const { text, title } = req.body;
 
     if (req.body) {
-        
+        const newNote = {
+            title,
+            text,
+            note_id: uuid(),
 
+        };
 
-
-
-
-
+        readAndAppend(newNote, './db/db.json');
+        res.json('Note added successfully');
+    } else {
+        res.errored('Error. Couldnt add tip');
+    
     }
 
 
-})
+});
+module.exports = notes;
 

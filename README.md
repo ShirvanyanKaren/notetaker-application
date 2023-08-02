@@ -1,24 +1,23 @@
-# 11 Express.js: Note Taker
+# Note Taker Application
 
-## Your Task
-
-Your assignment is to modify starter code to create an application called Note Taker that can be used to write and save notes. This application will use an Express.js back end and will save and retrieve note data from a JSON file.
-
-The application’s front end has already been created. It's your job to build the back end, connect the two, and then deploy the entire application to Heroku.
-
-
-## User Story
-
-```
-AS A small business owner
-I WANT to be able to write and save notes
-SO THAT I can organize my thoughts and keep track of tasks I need to complete
-```
+## Technology used
+| Technology Used         | Resource URL           | 
+| ------------- |:-------------:| 
+| Deployed Heroku App  | [https://note-taker-app-shirvanyank-f32586d10362.herokuapp.com/](https://note-taker-app-shirvanyank-f32586d10362.herokuapp.com/) |
+| My Repository      | [https://github.com/ShirvanyanKaren/notetaker-application](https://github.com/ShirvanyanKaren/notetaker-application) |
+| Node JS          | [https://nodejs.org/it/docs](https://nodejs.org/it/docs) |
+| Express JS    | [https://expressjs.com/en/guide/routing.html](https://expressjs.com/en/guide/routing.html) |
+| Git | [https://git-scm.com/](https://git-scm.com/)     | 
 
 
-## Acceptance Criteria
 
-```
+# Description
+
+The purpose of this application is to allow the user to add notes and save them to a list. The list is present in a column on the left-hand side of the page, making each saved note accessible to the user. 
+
+The application had to meet the following acceptance criteria:
+
+```md
 GIVEN a note-taking application
 WHEN I open the Note Taker
 THEN I am presented with a landing page with a link to a notes page
@@ -34,97 +33,115 @@ WHEN I click on the Write icon in the navigation at the top of the page
 THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column
 ```
 
+Here is an example of how the application runs:
 
-## Mock-Up
-
-The following images show the web application's appearance and functionality:
-
-![Existing notes are listed in the left-hand column with empty fields on the right-hand side for the new note’s title and text.](./Assets/11-express-challenge-demo-01.png)
-
-![Note titled “Balance accounts” reads, “Balance account books by end of day Monday,” with other notes listed on the left.](./Assets/11-express-challenge-demo-02.png)
+![Notetaker-App](./Assets/notetaker%20application,%202023%206_20%20PM.gif)
 
 
-## Getting Started
-
-On the back end, the application should include a `db.json` file that will be used to store and retrieve notes using the `fs` module.
-
-The following HTML routes should be created:
-
-* `GET /notes` should return the `notes.html` file.
-
-* `GET *` should return the `index.html` file.
-
-The following API routes should be created:
-
-* `GET /api/notes` should read the `db.json` file and return all saved notes as JSON.
-
-* `POST /api/notes` should receive a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
+## Table of Contents
+* [Express JS Routing](#express-js-routing)
+* [Usage](#usage)
+* [Contributions](#contributions)
+* [License](#license)
+* [Questions](#questions) 
 
 
-## Bonus
+## Express JS Routing
 
-You haven’t learned how to handle DELETE requests, but this application offers that functionality on the front end. As a bonus, try to add the DELETE route to the application using the following guideline:
-
-* `DELETE /api/notes/:id` should receive a query parameter that contains the id of a note to delete. To delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
+The note taker application was developed with preset code of fetch requests with get, post and delete methods for obtaining information on the client side. The input data is then stored on the back-end database JSON file using corresponding express js routing methods made accessible to the home page and the notes page.
 
 
-## Grading Requirements
+### Server file 
 
-This challenge is graded based on the following criteria: 
+The server.js file served as the medium to deliver the routes to the user. This was done through the importing the methods express, path, and index routes that provided all the preset routing methods for the notes page.
 
+```js
+// middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/api', api);
+app.use(express.static('public'));
 
-### Technical Acceptance Criteria: 40%
+// request and response leading to each page
+app.get('/notes', (req, res) => 
+    res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
 
-* Satisfies all of the preceding acceptance criteria plus the following:
+app.get('*', (req, res) => 
+    res.sendFile(path.join(__dirname, '/public/index.html'))
+);
+```
+The middleware present with the app.use methods sets an intermediary for the programs request, response cycle. The lines of middleware code respectively parse incoming json data, parses incoming URL-encoded data, mounts the exported api router onto the '/api' path, and allows client side access to the files stored in the public directory (the home and notes html pages).
 
-  * Application front end must connect to an Express.js back end.
+### Notes route
 
-  * Application back end must store notes that have a unique id in a JSON file.
+The routes files provide routing methods for the get, post, and delete methods respective to the database where we store client provided information.
 
-  * Application must be deployed to Heroku.
-
-
-### Deployment: 36%
-
-* Application deployed at live URL.
-
-* Application loads with no errors.
-
-* Application GitHub URL submitted.
-
-* GitHub repository contains application code.
-
-
-### Application Quality: 11%
-
-* Application console is free of errors.
-
-
-### Repository Quality: 13%
-
-* Repository has a unique name.
-
-* Repository follows best practices for file structure and naming conventions.
-
-* Repository follows best practices for class/id naming conventions, indentation, quality comments, etc.
-
-* Repository contains multiple descriptive commit messages.
-
-* Repository contains quality README file with description, screenshot, and link to deployed application.
+```js
+notes.get('/', (req, res) => {
+    
+    readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
+});
 
 
-### Bonus: +10 Points
+notes.post('/', (req, res) => {
+    console.log(`${req.method} request received to add a note`);
 
-* Application allows users to delete notes.
+    const { text, title } = req.body;
+
+    if (text && title) {
+        const newNote = {
+            title,
+            text,
+            id: uuidv4(),
+        };
+
+        readAndAppend(newNote, './db/db.json');
+        res.json('Note added successfully');
+    } else {
+        res.status(400).json({ error: 'Bad Request. Could not add note' });
+    
+    }
+});
+```
+
+The express routing methods for these requests follow a similar pattern to the javascript fetch methods, however instead of storing these items in local storage, we parse them and store them in the database. The functions readFromFile and readAndAppend are defined functions from the fsUtil helper extension. The readFromFile is a function that promisifies the fs.readFile function essentially making it into an asynchronous function that takes the database file path as an argument and returns the content only once it has been read. 
+
+The readAndAppend function works similarly but instead uses both the fs.writeToFile and fs.readFile methods. It reads the content of the file then parses the existing JSON data in the file, appends the new content to it, and then writes the updated JSON data back to the same file using the writeToFile function.
+
+Essentially, these methods obtain information from the database to append on the page while also allowing the user to update the database given their note includes text and title. This is all done in the notes route and exported to be used in the index-routes.
 
 
-## Review
+### Index route
 
-You are required to submit BOTH of the following for review:
+Finally, I utilized the index route file to make the notes route applicable to the server.
 
-* The URL of the functional, deployed application.
+```js
+const app = require('express').Router();
 
-* The URL of the GitHub repository, with a unique name and a README describing the project.
+const noteRouter = require('./notes');
 
-- - -
-© 2023 edX Boot Camps LLC. Confidential and Proprietary. All Rights Reserved.
+app.use('/notes', noteRouter);
+
+module.exports = app;
+```
+This file serves the purpose of providing an endpoint, /api, with the value of notesRouter linking back to the exported notes route. This makes the client side get, post, and delete fetch methods applicable to the database once imported and applied to the server file. 
+
+
+## Usage 
+
+This application can be used to plan out your day, take notes, or store information that can be deleted and saved. Through the utilization of expess routing and a JSON database, the information is stored and accessible from anywhere and on any computer. 
+
+        
+## Credits
+Credits to Philip Loy from the Central Tutor Center for helping with review the application and making sure I met the acceptance criteria.
+
+        
+## License 
+     
+MIT licensing with permisions such as commercial use, modification, distribution and private use. Limitations include liability and warranty.
+
+## Questions 
+
+* Check out my other projects on my [my Github](https://github.com/ShirvanyanKaren)
+* For any additional questions or concerns, please email me at kshirvanyan2000@gmail.com

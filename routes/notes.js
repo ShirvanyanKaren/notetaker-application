@@ -6,8 +6,8 @@ const {v4: uuidv4 } = require('uuid');
 
 notes.get('/', (req, res) => {
     
-    readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)))
-})
+    readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
+});
 // notes.get("/", (req, res) =>
 //   readFromFile("./db/db.json").then((data) => res.json(JSON.parse(data)))
 // );

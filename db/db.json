@@ -13,15 +13,5 @@
         "title": "OOP",
         "text": "Inheritance: Inheritance allows a class (subclass) to inherit properties and behaviors from another class (superclass), promoting code reuse and creating a hierarchical relationship between classes.\n\nPolymorphism: Polymorphism enables objects of different classes to be treated as instances of a common superclass, allowing methods to be invoked on these objects without knowing their specific class types.\n\nEncapsulation: Encapsulation restricts access to the internal state and implementation details of an object, promoting data hiding and providing controlled access through methods, thus protecting the object's integrity.\n\nAbstraction: Abstraction focuses on providing a simplified representation of an object's essential characteristics, hiding the irrelevant details and making complex systems easier to understand and use.",
         "id": "f372a6ec-7fa4-4777-852c-24f508f1b294"
-    },
-    {
-        "title": "e",
-        "text": "eeeeeee",
-        "id": "424e80f3-88d7-4a60-a747-3b7d8d64ed44"
-    },
-    {
-        "title": "s",
-        "text": "s",
-        "id": "bdb4fc55-5617-4d88-b1e4-59168dc8dc07"
     }
 ]
